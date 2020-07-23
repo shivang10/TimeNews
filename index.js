@@ -1,8 +1,10 @@
+const express = require('express');
+const app = express();
 const request = require('request');
 let url = "https://time.com/";
 
-async function fn() {
-    let res = request.get(url, (_error, _response, body) => {
+app.get('/', async function (req, res) {
+    request.get(url, (_error, _response, body) => {
         let ans = JSON.stringify(body).match(/<ol class(.*?)<\/ol>/g)[0].match(/<a h(.*?)<\/a>/gi).map(i =>
             [
                 i.match(/>(.*?)</gi),
@@ -15,9 +17,10 @@ async function fn() {
                 link: "https://time.com/" + i[1][0].substr(6, i[1][0].length - 7)
             }
         });
-        console.log(obj);
+        res.send(obj);
     });
-    return res;
-}
-fn();
-console.log("Top 5 news are: ");
+});
+
+app.listen(3000, () => {
+    console.log("Server is running");
+})
